@@ -1,20 +1,20 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from './store/configureStore';
+import PostList from './components/posts';
+import AddPostForm from './components/addPost';
 import './App.css';
-import CustomPosts from './components/posts';
-import CustomAddPost from './components/addPost';
 
-const CustomApp: React.FC = () => {
+function App() {
   return (
-    <div className="CustomApp">
-      <header className="CustomApp-header">
+    <Provider store={store}>
+      <div className="App">
         <h1>Posts App</h1>
-      </header>
-      <main>
-        <CustomAddPost />
-        <CustomPosts />
-      </main>
-    </div>
+        <AddPostForm />
+        <PostList />
+      </div>
+    </Provider>
   );
-};
+}
 
-export default CustomApp;
+export default App;

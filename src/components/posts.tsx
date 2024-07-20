@@ -1,41 +1,35 @@
-import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { fetchCustomPosts } from '../store/postSlice';
+import React from 'react';
+import { useGetPostsQuery } from '../store/postApi';
 
-const CustomPosts: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const customPosts = useAppSelector(
-    (state) => state.customPosts.customPosts
-  );
-  const postStatus = useAppSelector((state) => state.customPosts.status);
-  const error = useAppSelector((state) => state.customPosts.error);
+const PostList: React.FC = () => {
+  const { data: posts, error, isLoading } = useGetPostsQuery();
 
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchCustomPosts());
-    }
-  }, [postStatus, dispatch]);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {(error as any).message}</div>;
 
-  return (
-    <section>
-      <h2>Posts</h2>
-      {postStatus === 'loading' ? (
-        <p>Loading...</p>
-      ) : postStatus === 'failed' ? (
-        <p>{error}</p>
-      ) : (
-        <ul>
-          {customPosts.map((post:any) => (
-            <li key={post.id}>
-              <p>User ID: {post.userId}</p>
-              <p>Title: {post.title}</p>
-              <p>Completed: {post.completed ? 'Yes' : 'No'}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
+  return (
+    <div className="post-list">
+      <h2>Posts</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Title</th>
+            <th>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {posts?.map((post) => (
+            <tr key={post.id}>
+              <td>{post.userId}</td>
+              <td>{post.title}</td>
+              <td>{post.body ? 'Yes' : 'No'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
-export default CustomPosts;
+export default PostList;
