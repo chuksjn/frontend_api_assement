@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useCustomAppDispatch } from '../hooks';
+import { useAppDispatch } from '../hooks';
 import { addCustomPost } from '../store/postSlice';
 
 const CustomAddPost: React.FC = () => {
-  const dispatch = useCustomAppDispatch();
+  // const dispatch = useCustomAppDispatch();
   const [customTitle, setCustomTitle] = useState('');
   const [customCompleted, setCustomCompleted] = useState(false);
   const [customUserId, setCustomUserId] = useState(1);
@@ -13,7 +13,7 @@ const CustomAddPost: React.FC = () => {
 
   const onSaveCustomPostClicked = () => {
     if (customTitle) {
-      dispatch(addCustomPost({ title: customTitle, userId: customUserId, completed: customCompleted }));
+      // dispatch(addCustomPost({ title: customTitle, userId: customUserId, completed: customCompleted }));
       setCustomTitle('');
       setCustomCompleted(false);
     }

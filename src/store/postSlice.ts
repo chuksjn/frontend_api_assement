@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface CustomPost {
@@ -20,15 +20,29 @@ const initialCustomPostsState: CustomPostsState = {
   error: null,
 };
 
-export const fetchCustomPosts = createAsyncThunk('customPosts/fetchCustomPosts', async () => {
-  const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-  return response.data.map((post: Omit<CustomPost, 'completed'>) => ({ ...post, completed: false }));
-});
+export const fetchCustomPosts = createAsyncThunk<CustomPost[], void, { rejectValue: string }>(
+  'customPosts/fetchCustomPosts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get<Omit<CustomPost, 'completed'>[]>('https://jsonplaceholder.typicode.com/posts');
+      return response.data.map(post => ({ ...post, completed: false }));
+    } catch (error) {
+      return rejectWithValue('Failed to fetch posts');
+    }
+  }
+);
 
-export const addCustomPost = createAsyncThunk('customPosts/addCustomPost', async (newPost: Omit<CustomPost, 'id'>) => {
-  const response = await axios.post('https://jsonplaceholder.typicode.com/posts', newPost);
-  return { ...response.data, completed: newPost.completed };
-});
+export const addCustomPost = createAsyncThunk<CustomPost, Omit<CustomPost, 'id'>, { rejectValue: string }>(
+  'customPosts/addCustomPost',
+  async (newPost, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<Omit<CustomPost, 'completed'>>('https://jsonplaceholder.typicode.com/posts', newPost);
+      return { ...response.data, completed: newPost.completed };
+    } catch (error) {
+      return rejectWithValue('Failed to add post');
+    }
+  }
+);
 
 const customPostsSlice = createSlice({
   name: 'customPosts',
@@ -39,18 +53,20 @@ const customPostsSlice = createSlice({
       .addCase(fetchCustomPosts.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchCustomPosts.fulfilled, (state, action) => {
+      .addCase(fetchCustomPosts.fulfilled, (state, action: PayloadAction<CustomPost[]>) => {
         state.status = 'succeeded';
         state.customPosts = action.payload;
       })
       .addCase(fetchCustomPosts.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch posts';
+        state.error = action.payload || 'Failed to fetch posts';
       })
-      .addCase(addCustomPost.fulfilled, (state, action) => {
+      .addCase(addCustomPost.fulfilled, (state, action: PayloadAction<CustomPost>) => {
         state.customPosts.push(action.payload);
       });
   },
 });
 
 export default customPostsSlice.reducer;
+
+

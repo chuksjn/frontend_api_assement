@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import customPostsReducer from './postSlice';
+import customPostsReducer from './postSlice'
 
 export const customStore = configureStore({
   reducer: {
@@ -7,5 +7,5 @@ export const customStore = configureStore({
   },
 });
 
-export type RootStateType = ReturnType<typeof customStore.getState>;
-export type AppDispatchType = typeof customStore.dispatch;
+export type RootState = ReturnType<typeof customStore.getState>;
+export type AppDispatch = typeof customStore.dispatch;

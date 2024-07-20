@@ -1,45 +1,41 @@
 import React, { useEffect } from 'react';
-import { useCustomAppDispatch, useCustomAppSelector } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { fetchCustomPosts } from '../store/postSlice';
 
 const CustomPosts: React.FC = () => {
-  const dispatch = useCustomAppDispatch();
-  const customPosts = useCustomAppSelector((state) => state.customPosts.customPosts);
-  const postStatus = useCustomAppSelector((state) => state.customPosts.status);
-  const error = useCustomAppSelector((state) => state.customPosts.error);
+  const dispatch = useAppDispatch();
+  const customPosts = useAppSelector(
+    (state) => state.customPosts.customPosts
+  );
+  const postStatus = useAppSelector((state) => state.customPosts.status);
+  const error = useAppSelector((state) => state.customPosts.error);
 
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchCustomPosts());
-    }
-  }, [postStatus, dispatch]);
+  useEffect(() => {
+    if (postStatus === 'idle') {
+      dispatch(fetchCustomPosts());
+    }
+  }, [postStatus, dispatch]);
 
-  let content;
-
-  if (postStatus === 'loading') {
-    content = <p>Loading...</p>;
-  } else if (postStatus === 'succeeded') {
-    content = (
-      <ul>
-        {customPosts.map((post) => (
-          <li key={post.id}>
-            <p>User ID: {post.userId}</p>
-            <p>Title: {post.title}</p>
-            <p>Completed: {post.completed ? 'Yes' : 'No'}</p>
-          </li>
-        ))}
-      </ul>
-    );
-  } else if (postStatus === 'failed') {
-    content = <p>{error}</p>;
-  }
-
-  return (
-    <section>
-      <h2>Posts</h2>
-      {content}
-    </section>
-  );
+  return (
+    <section>
+      <h2>Posts</h2>
+      {postStatus === 'loading' ? (
+        <p>Loading...</p>
+      ) : postStatus === 'failed' ? (
+        <p>{error}</p>
+      ) : (
+        <ul>
+          {customPosts.map((post:any) => (
+            <li key={post.id}>
+              <p>User ID: {post.userId}</p>
+              <p>Title: {post.title}</p>
+              <p>Completed: {post.completed ? 'Yes' : 'No'}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 };
 
 export default CustomPosts;
