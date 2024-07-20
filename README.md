@@ -7,3 +7,12 @@ To get started, follow these steps:
 3. Run `npm install` to install the required dependencies.
 4. Run `npm run dev` to start the web server. 
 
+Technologies Used
+
+ React
+ TypeScript
+ Redux Toolkit
+ Axios
+
+ JSONPlaceholder API:
+https://jsonplaceholder.typicode.com
